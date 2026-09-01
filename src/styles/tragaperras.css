@@ -1,0 +1,657 @@
+/* ============================================================
+   El tragaperras. Los rodillos son cilindros CSS 3D de verdad:
+   cada premio es una cara pegada por dentro con
+   rotateX(i·paso) translateZ(radio).
+   ============================================================ */
+
+.maquina__zona {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.6rem, 1.2rem + 2.4vw, 2.6rem);
+}
+
+/* ── El mueble ─────────────────────────────────────────── */
+
+.maquina {
+  position: relative;
+  width: min(100%, 480px);
+  border-radius: var(--r-xl);
+  border: 1px solid rgba(242, 197, 107, 0.24);
+  background:
+    linear-gradient(168deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015)),
+    linear-gradient(180deg, #1a1329 0%, #0c0914 100%);
+  box-shadow:
+    var(--sombra-honda),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 70px rgba(242, 197, 107, 0.13);
+  overflow: hidden;
+}
+
+/* Marquesina */
+
+.maquina__marquesina {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(242, 197, 107, 0.16), transparent);
+}
+
+.maquina__rotulo {
+  font-family: var(--f-display);
+  font-size: clamp(1.15rem, 0.9rem + 1.6vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: var(--grad-oro);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 34px rgba(242, 197, 107, 0.35);
+}
+
+.maquina__foco {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--oro);
+  box-shadow: 0 0 14px var(--oro);
+  animation: brillar 1.5s ease-in-out infinite;
+}
+
+.maquina__foco:last-of-type {
+  animation-delay: 0.75s;
+}
+
+/* Cuerpo con los rodillos */
+
+.maquina__cuerpo {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 0.5rem + 1.4vw, 1.4rem);
+  padding: clamp(1rem, 0.7rem + 1.6vw, 1.6rem);
+}
+
+.maquina__rodillos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  background: #05040a;
+  box-shadow:
+    inset 0 6px 18px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: box-shadow 400ms var(--ease-suave);
+}
+
+.maquina__rodillos.es-girando {
+  box-shadow:
+    inset 0 6px 18px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 93, 143, 0.35),
+    0 0 42px rgba(255, 93, 143, 0.3);
+}
+
+/* ── Un rodillo ────────────────────────────────────────── */
+
+.rodillo {
+  position: relative;
+  height: clamp(94px, 25vw, 128px);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(180deg, #171021, #0c0812);
+  perspective: 620px;
+}
+
+.rodillo__cilindro {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.16, 0.9, 0.22, 1);
+}
+
+.rodillo__cara {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.3rem;
+  backface-visibility: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015)),
+    #120d1c;
+  border-block: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.rodillo__icono {
+  font-size: clamp(1.7rem, 6vw, 2.3rem);
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--tinte) 55%, transparent));
+}
+
+.rodillo__nombre {
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--tinte);
+  line-height: 1.15;
+}
+
+/* Vidrio curvo: oscurece arriba y abajo para dar volumen */
+.rodillo__vidrio {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.2) 22%,
+    transparent 46%,
+    rgba(0, 0, 0, 0.2) 74%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+}
+
+/* Rayita central del pago */
+.rodillo__linea {
+  position: absolute;
+  inset-inline: 6%;
+  top: 50%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(242, 197, 107, 0.55), transparent);
+}
+
+/* ── Palanca ───────────────────────────────────────────── */
+
+.palanca {
+  position: relative;
+  flex: none;
+  width: 26px;
+  height: clamp(110px, 28vw, 148px);
+  transform-origin: 50% 100%;
+  transition: transform 300ms var(--ease-rebote);
+}
+
+/* Ranura por donde corre la palanca */
+.palanca::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: #05040a;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.palanca.es-jalada {
+  transform: rotate(26deg);
+}
+
+.palanca__vara {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 7px;
+  height: 100%;
+  margin-left: -3.5px;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, #4a4258, #b9b0c9 45%, #4a4258);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.palanca__bola {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #ff9dbb, #c53a67 62%, #7d2542);
+  box-shadow:
+    0 0 18px rgba(255, 93, 143, 0.6),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* ── Base: fichas + botón ──────────────────────────────── */
+
+.maquina__base {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0 clamp(1rem, 0.7rem + 1.6vw, 1.6rem) clamp(1.2rem, 1rem + 1.6vw, 1.7rem);
+}
+
+.fichas {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.ficha {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--oro);
+  box-shadow: 0 0 12px rgba(242, 197, 107, 0.65);
+  transition:
+    background-color 320ms var(--ease-suave),
+    box-shadow 320ms var(--ease-suave),
+    transform 320ms var(--ease-suave);
+}
+
+.ficha.es-usada {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+  transform: scale(0.78);
+}
+
+.fichas__texto {
+  margin-left: 0.5rem;
+  color: var(--tx-3);
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.maquina__boton {
+  width: 100%;
+  min-height: 54px;
+  font-size: var(--t-md);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Las cartas del premio ─────────────────────────────── */
+
+.cartas {
+  width: 100%;
+  max-width: 900px;
+}
+
+.cartas__titulo {
+  margin-bottom: 1.1rem;
+  color: var(--tx-2);
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: var(--t-lg);
+  text-align: center;
+}
+
+.cartas__lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  list-style: none;
+}
+
+.carta-premio {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'icono nombre'
+    'icono frase';
+  align-items: center;
+  gap: 0.15rem 1rem;
+  width: 100%;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background:
+    linear-gradient(150deg, color-mix(in srgb, var(--tinte) 12%, transparent), transparent 62%),
+    var(--bg-elev);
+  text-align: left;
+  transform-style: preserve-3d;
+  transition:
+    transform 420ms var(--ease-rebote),
+    border-color 320ms var(--ease-suave),
+    box-shadow 320ms var(--ease-suave),
+    opacity 320ms var(--ease-suave);
+}
+
+.carta-premio:not(:disabled):hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--tinte) 55%, transparent);
+}
+
+.carta-premio:disabled {
+  cursor: default;
+}
+
+.carta-premio.es-nueva {
+  animation: llegar-carta 620ms var(--ease-rebote);
+}
+
+@keyframes llegar-carta {
+  0% {
+    transform: perspective(800px) rotateX(-72deg) translateY(26px);
+    opacity: 0;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.carta-premio.es-elegida {
+  border-color: color-mix(in srgb, var(--tinte) 75%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tinte) 45%, transparent),
+    0 0 40px color-mix(in srgb, var(--tinte) 30%, transparent);
+  background:
+    linear-gradient(150deg, color-mix(in srgb, var(--tinte) 22%, transparent), transparent 68%),
+    var(--bg-elev);
+}
+
+.carta-premio__num {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.9rem;
+  color: var(--tx-3);
+  font-family: var(--f-display);
+  font-size: 0.8rem;
+  opacity: 0.55;
+}
+
+.carta-premio__icono {
+  grid-area: icono;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--tinte) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tinte) 35%, transparent);
+  font-size: 1.6rem;
+  transform: translateZ(20px);
+}
+
+.carta-premio__nombre {
+  grid-area: nombre;
+  font-family: var(--f-display);
+  font-size: var(--t-lg);
+  font-weight: 700;
+}
+
+.carta-premio__frase {
+  grid-area: frase;
+  color: var(--tx-2);
+  font-size: var(--t-sm);
+  font-weight: 300;
+  line-height: 1.45;
+}
+
+.carta-premio__sello {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tinte);
+  color: #0b0812;
+  font-size: 0.78rem;
+  font-weight: 700;
+  animation: sello-entra 340ms var(--ease-rebote);
+}
+
+@keyframes sello-entra {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* ── Reclamo ───────────────────────────────────────────── */
+
+.reclamo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.4rem;
+  padding: clamp(1.2rem, 0.9rem + 1.6vw, 1.8rem);
+  border-radius: var(--r-lg);
+}
+
+.reclamo__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reclamo__campo > span {
+  color: var(--tx-2);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.reclamo__campo textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: rgba(0, 0, 0, 0.32);
+  color: var(--tx);
+  font-size: var(--t-md);
+  font-weight: 300;
+  resize: vertical;
+  transition: border-color 240ms var(--ease-suave);
+}
+
+.reclamo__campo textarea::placeholder {
+  color: var(--tx-3);
+}
+
+.reclamo__campo textarea:focus {
+  outline: none;
+  border-color: var(--rosa);
+  box-shadow: 0 0 0 3px rgba(255, 93, 143, 0.16);
+}
+
+.reclamo__boton {
+  width: 100%;
+  min-height: 54px;
+}
+
+.reclamo__error {
+  color: #ffa8a8;
+  font-size: var(--t-sm);
+  text-align: center;
+}
+
+/* ── Velo de bloqueo ───────────────────────────────────── */
+
+.maquina__zona.es-bloqueada > .maquina,
+.maquina__zona.es-bloqueada > .cartas {
+  filter: blur(11px) saturate(0.6);
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+  transition:
+    filter 700ms var(--ease-suave),
+    opacity 700ms var(--ease-suave);
+}
+
+.velo {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.velo__tarjeta {
+  max-width: 26rem;
+  padding: clamp(1.6rem, 1.2rem + 2.4vw, 2.4rem);
+  border-color: rgba(242, 197, 107, 0.32);
+  border-radius: var(--r-lg);
+  text-align: center;
+  box-shadow:
+    var(--sombra-honda),
+    0 0 60px rgba(242, 197, 107, 0.16);
+  animation: velo-entra 620ms var(--ease-rebote);
+}
+
+@keyframes velo-entra {
+  from {
+    transform: perspective(900px) translateY(24px) rotateX(10deg) scale(0.94);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.velo__icono {
+  display: block;
+  font-size: 2.8rem;
+  animation: latir 3s ease-in-out infinite;
+}
+
+.velo__titulo {
+  margin-top: 0.7rem;
+  font-size: var(--t-xl);
+}
+
+.velo__premio {
+  margin-top: 0.3rem;
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: var(--t-lg);
+  background: var(--grad-oro);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.velo__texto {
+  margin-top: 0.9rem;
+  color: var(--tx-2);
+  font-size: var(--t-sm);
+  font-weight: 300;
+}
+
+.velo__nota {
+  margin-top: 0.8rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--r-sm);
+  background: rgba(255, 93, 143, 0.12);
+  color: var(--rosa-claro);
+  font-size: var(--t-xs);
+}
+
+.velo__pie {
+  margin-top: 1.1rem;
+  color: var(--tx-3);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+}
+
+/* ── Aviso de rehabilitación ───────────────────────────── */
+
+.aviso-llave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 30rem;
+  margin: 0 auto 1.6rem;
+  padding: 0.85rem 1.2rem;
+  border: 1px solid rgba(242, 197, 107, 0.35);
+  border-radius: var(--r-full);
+  background: rgba(242, 197, 107, 0.1);
+  color: var(--oro);
+  font-size: var(--t-sm);
+  text-align: center;
+  animation: velo-entra 500ms var(--ease-rebote);
+}
+
+/* ════════════════════════════════════════════════════════════
+   ▸ Pantallas medianas y grandes
+   ════════════════════════════════════════════════════════════ */
+
+@media (min-width: 640px) {
+  .cartas__lista {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .carta-premio {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'icono'
+      'nombre'
+      'frase';
+    justify-items: center;
+    gap: 0.6rem;
+    padding: 1.6rem 1.2rem;
+    text-align: center;
+  }
+
+  .carta-premio__sello {
+    bottom: auto;
+    top: 0.9rem;
+    left: 0.9rem;
+    right: auto;
+  }
+
+  .reclamo {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .reclamo__campo {
+    flex: 1;
+  }
+
+  .reclamo__boton {
+    width: auto;
+    flex: none;
+    min-width: 15rem;
+  }
+
+  .reclamo__error {
+    flex-basis: 100%;
+  }
+}
+
+@media (min-width: 960px) {
+  .maquina {
+    width: 560px;
+  }
+
+  .rodillo {
+    height: 150px;
+  }
+
+  .rodillo__nombre {
+    font-size: 0.62rem;
+  }
+
+  .palanca {
+    width: 24px;
+    height: 172px;
+  }
+}

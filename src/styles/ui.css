@@ -1,0 +1,266 @@
+/* ============================================================
+   Piezas reutilizables: secciones, etiquetas, botones, tarjetas.
+   ============================================================ */
+
+/* ── Reveal: aparecer al hacer scroll ──────────────────── */
+
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 750ms var(--ease-suave),
+    transform 750ms var(--ease-suave);
+  transition-delay: var(--demora, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal--abajo {
+  transform: translate3d(0, 34px, 0);
+}
+.reveal--izquierda {
+  transform: translate3d(-40px, 0, 0);
+}
+.reveal--derecha {
+  transform: translate3d(40px, 0, 0);
+}
+.reveal--fondo {
+  transform: perspective(var(--perspectiva)) translate3d(0, 28px, -140px) rotateX(12deg);
+}
+
+.reveal.es-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Sección ───────────────────────────────────────────── */
+
+.seccion {
+  position: relative;
+  padding-block: var(--pad-y);
+}
+
+.seccion__cabeza {
+  max-width: 46rem;
+  margin-bottom: clamp(2.2rem, 1.4rem + 3vw, 4rem);
+}
+
+.seccion__cabeza.es-centrada {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.seccion__titulo {
+  font-size: var(--t-2xl);
+  margin-top: 0.6rem;
+}
+
+.seccion__bajada {
+  margin-top: 1rem;
+  color: var(--tx-2);
+  font-size: var(--t-lg);
+  font-weight: 300;
+  line-height: 1.6;
+  max-width: var(--ancho-texto);
+}
+
+.es-centrada .seccion__bajada {
+  margin-inline: auto;
+}
+
+/* ── Etiqueta pequeña ──────────────────────────────────── */
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.etiqueta__punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rosa);
+  box-shadow: 0 0 12px var(--rosa);
+  animation: brillar 2.6s ease-in-out infinite;
+}
+
+/* ── Tarjeta de vidrio ─────────────────────────────────── */
+
+.vidrio {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012)),
+    var(--bg-elev);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--sombra-media);
+  overflow: hidden;
+}
+
+/* Filito de luz arriba */
+.vidrio::before {
+  content: '';
+  position: absolute;
+  inset-inline: 12%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  pointer-events: none;
+}
+
+/* ── Tarjeta con inclinación 3D ────────────────────────── */
+
+.tilt {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  --alzar: 0px;
+  transform-style: preserve-3d;
+  transform: perspective(var(--perspectiva)) rotateX(var(--rx)) rotateY(var(--ry))
+    translateZ(var(--alzar));
+  transition: transform 480ms var(--ease-suave);
+}
+
+@media (pointer: fine) {
+  .tilt:hover {
+    transition: transform 120ms linear;
+  }
+}
+
+/* Reflejo que sigue al puntero */
+.tilt__brillo {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 350ms var(--ease-suave);
+  background: radial-gradient(
+    380px circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.16),
+    transparent 62%
+  );
+}
+
+@media (pointer: fine) {
+  .tilt:hover .tilt__brillo {
+    opacity: 1;
+  }
+}
+
+/* ── Botones ───────────────────────────────────────────── */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0.85rem 1.7rem;
+  border-radius: var(--r-full);
+  font-family: var(--f-cuerpo);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: center;
+  overflow: hidden;
+  transition:
+    transform 220ms var(--ease-rebote),
+    box-shadow 260ms var(--ease-suave),
+    background-color 220ms var(--ease-suave),
+    border-color 220ms var(--ease-suave),
+    opacity 220ms var(--ease-suave);
+}
+
+.btn:active {
+  transform: scale(0.965);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn--principal {
+  color: #fff;
+  background: var(--grad-calido);
+  box-shadow: var(--brillo-rosa), var(--sombra-suave);
+}
+
+.btn--principal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+}
+
+.btn--principal:not(:disabled):hover::after {
+  animation: deslizar-brillo 950ms var(--ease-suave);
+}
+
+.btn--principal:not(:disabled):hover {
+  box-shadow:
+    0 0 56px rgba(255, 93, 143, 0.42),
+    var(--sombra-media);
+  transform: translateY(-2px);
+}
+
+.btn--oro {
+  color: #2a1d05;
+  background: var(--grad-oro);
+  box-shadow: var(--brillo-oro), var(--sombra-suave);
+}
+
+.btn--oro:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 60px rgba(242, 197, 107, 0.45),
+    var(--sombra-media);
+}
+
+.btn--fantasma {
+  color: var(--tx);
+  border: 1px solid var(--line-strong);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.btn--fantasma:not(:disabled):hover {
+  border-color: var(--rosa);
+  background: rgba(255, 93, 143, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn--chico {
+  min-height: 40px;
+  padding: 0.55rem 1.15rem;
+  font-size: var(--t-xs);
+}
+
+/* ── Cinta de "nota" manuscrita ────────────────────────── */
+
+.nota {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: var(--t-lg);
+  font-weight: 500;
+  color: var(--rosa-claro);
+  line-height: 1.5;
+}
