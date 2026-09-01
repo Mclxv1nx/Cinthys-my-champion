@@ -18,11 +18,12 @@
   pointer-events: none;
 }
 
+/* Sin `filter: blur()`: el degradado radial ya es suave por si solo, y
+   difuminar una capa de 62vmax es de lo mas caro que hay en un celular. */
 .fondo__aurora {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.5;
+  opacity: 0.55;
   will-change: transform;
 }
 
@@ -31,7 +32,7 @@
   height: 62vmax;
   top: -22vmax;
   left: -18vmax;
-  background: radial-gradient(circle, rgba(255, 93, 143, 0.5), transparent 68%);
+  background: radial-gradient(circle, rgba(255, 93, 143, 0.42) 0%, rgba(255, 93, 143, 0.2) 34%, transparent 70%);
   animation: flotar 17s ease-in-out infinite;
 }
 
@@ -40,7 +41,7 @@
   height: 58vmax;
   top: 32%;
   right: -24vmax;
-  background: radial-gradient(circle, rgba(155, 107, 242, 0.45), transparent 68%);
+  background: radial-gradient(circle, rgba(155, 107, 242, 0.4) 0%, rgba(155, 107, 242, 0.18) 34%, transparent 70%);
   animation: flotar 23s ease-in-out infinite reverse;
 }
 
@@ -49,7 +50,7 @@
   height: 46vmax;
   bottom: -18vmax;
   left: 22%;
-  background: radial-gradient(circle, rgba(242, 197, 107, 0.24), transparent 66%);
+  background: radial-gradient(circle, rgba(242, 197, 107, 0.22) 0%, rgba(242, 197, 107, 0.1) 34%, transparent 70%);
   animation: flotar 29s ease-in-out infinite;
 }
 
@@ -65,7 +66,7 @@
 
 .fondo__grano {
   position: absolute;
-  inset: -50%;
+  inset: 0;
   opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -108,8 +109,8 @@
   border: 1px solid var(--line);
   border-radius: var(--r-full);
   background: rgba(12, 9, 20, 0.78);
-  backdrop-filter: blur(22px) saturate(1.5);
-  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: var(--sombra-honda);
 }
 
@@ -164,7 +165,7 @@
   align-items: center;
   min-height: 100svh;
   /* El colchón de abajo deja libre la barra flotante del pulgar. */
-  padding-block: clamp(4rem, 3rem + 6vw, 7rem) calc(7.5rem + env(safe-area-inset-bottom));
+  padding-block: clamp(4rem, 3rem + 6vw, 7rem) calc(8.5rem + env(safe-area-inset-bottom));
   overflow: hidden;
 }
 
@@ -263,22 +264,6 @@
   animation: flotar 8s ease-in-out infinite;
 }
 
-.hero__halo {
-  position: absolute;
-  inset: -35%;
-  z-index: 0;
-  background: conic-gradient(
-    from 0deg,
-    var(--rosa),
-    var(--violeta),
-    var(--oro),
-    var(--rosa)
-  );
-  filter: blur(38px);
-  opacity: 0.42;
-  animation: girar 14s linear infinite;
-}
-
 .hero__foto {
   position: relative;
   z-index: 1;
@@ -312,9 +297,9 @@
   padding: 0.7rem 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--r-md);
-  background: rgba(14, 10, 23, 0.62);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(14, 10, 23, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transform: translateZ(42px);
   text-align: left;
 }
@@ -540,14 +525,10 @@
 }
 
 .momento__medio img,
-.momento__medio video {
+.momento__medio .minivideo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.momento__medio video {
-  background: #000;
 }
 
 .momento__cuerpo {
@@ -718,9 +699,7 @@
   padding: 0.65rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: var(--r-md);
-  background: rgba(14, 10, 23, 0.66);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(14, 10, 23, 0.86);
   transform: translateZ(36px);
 }
 
@@ -788,12 +767,9 @@
   overflow: hidden;
 }
 
-.sayko__video video {
+.sayko__video .minivideo {
   width: 100%;
-  aspect-ratio: 9 / 16;
-  max-height: 460px;
-  object-fit: cover;
-  background: #000;
+  aspect-ratio: 4 / 3;
 }
 
 .sayko__video figcaption {
@@ -914,10 +890,8 @@
   border-radius: 50%;
   background: rgba(14, 10, 23, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  font-size: 0.85rem;
-  padding-left: 3px;
+  color: #fff;
+  padding-left: 2px;
 }
 
 .pieza__pie {
@@ -945,9 +919,7 @@
   height: 46px;
   border: 1px solid var(--line-strong);
   border-radius: 50%;
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(24, 18, 38, 0.7);
   font-size: 1.5rem;
   line-height: 1;
   transition:
@@ -987,9 +959,9 @@
   text-transform: none;
 }
 
-/* ── Lupa (visor grande) ───────────────────────────────── */
+/* ── Visor a pantalla completa (fotos y videos) ────────── */
 
-.lupa {
+.visor {
   position: fixed;
   inset: 0;
   z-index: 200;
@@ -1011,17 +983,17 @@
   }
 }
 
-.lupa__caja {
+.visor__caja {
   position: relative;
   max-width: min(92vw, 640px);
   max-height: 86vh;
   border-radius: var(--r-lg);
   overflow: hidden;
   box-shadow: var(--sombra-honda);
-  animation: subir-lupa 340ms var(--ease-rebote);
+  animation: subir-visor 340ms var(--ease-rebote);
 }
 
-@keyframes subir-lupa {
+@keyframes subir-visor {
   from {
     transform: perspective(900px) translateY(28px) scale(0.94) rotateX(6deg);
     opacity: 0;
@@ -1032,16 +1004,24 @@
   }
 }
 
-.lupa__caja img,
-.lupa__caja video {
-  max-height: 78vh;
+.visor__caja {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nada de recortes: la foto o el video mandan su proporción real. */
+.visor__foto,
+.visor__video {
+  display: block;
   width: auto;
   max-width: 100%;
+  max-height: 74svh;
+  margin-inline: auto;
   object-fit: contain;
   background: #000;
 }
 
-.lupa__pie {
+.visor__pie {
   padding: 0.85rem 1.2rem;
   background: var(--bg-elev);
   font-family: var(--f-display);
@@ -1050,7 +1030,7 @@
   text-align: center;
 }
 
-.lupa__cerrar {
+.visor__cerrar {
   position: absolute;
   top: max(1rem, env(safe-area-inset-top));
   right: 1rem;
@@ -1484,7 +1464,7 @@
     font-size: 0.64rem;
   }
 
-  .sayko__video video {
+  .sayko__video .minivideo {
     aspect-ratio: 16 / 10;
   }
 }
@@ -1607,9 +1587,8 @@
     align-items: center;
   }
 
-  .sayko__video video {
+  .sayko__video .minivideo {
     aspect-ratio: 16 / 9;
-    max-height: none;
   }
 
   /* Las dos tarjetas de música, del mismo alto. */
@@ -1673,4 +1652,66 @@
     margin-top: -186px;
     margin-left: -140px;
   }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   CARÁTULA DE VIDEO
+   Solo se ve el poster (una imagen ligera). El .mp4 no se descarga
+   hasta que ella toca play, y entonces se abre en el visor con su
+   proporción real — nada de videos verticales aplastados.
+   ════════════════════════════════════════════════════════════ */
+
+.minivideo {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: #06040c;
+}
+
+.minivideo__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease-suave);
+}
+
+.minivideo__velo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(8, 6, 13, 0.5), transparent 58%);
+}
+
+.minivideo__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding-left: 3px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--rosa);
+  color: #fff;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.5),
+    0 0 0 8px rgba(255, 93, 143, 0.15);
+  transition: transform 280ms var(--ease-rebote);
+}
+
+@media (pointer: fine) {
+  .minivideo:hover .minivideo__poster {
+    transform: scale(1.045);
+  }
+  .minivideo:hover .minivideo__play {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+.minivideo:active .minivideo__play {
+  transform: translate(-50%, -50%) scale(0.93);
 }

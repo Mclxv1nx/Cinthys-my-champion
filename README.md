@@ -218,6 +218,19 @@ nada más.
 
 ## Detalles técnicos
 
+- **El contador de días es automático.** Sale de `fechas.nosConocimos` en
+  `src/lib/config.ts` y se recalcula cada vez que alguien abre la página. No hay
+  que tocarlo nunca.
+- **Fotos en tres tamaños.** Cada imagen existe en 480, 760 y 1200 px de ancho;
+  el componente `<Foto>` arma el `srcset` y el navegador baja la que necesita.
+  Un celular baja ~35 KB donde antes bajaba ~105 KB.
+- **Los videos no pesan hasta que se tocan.** En las tarjetas solo se ve el
+  poster (una imagen). El `.mp4` se descarga recién cuando ella toca play, y se
+  abre en un visor a pantalla completa con su proporción real — nada de videos
+  verticales aplastados dentro de una caja horizontal.
+- **Nada de `backdrop-filter` en lo que scrollea.** Es lo más caro de pintar en
+  un celular; se cambió por colores planos que sobre fondo oscuro se ven igual.
+  Solo queda en la barra flotante y en el visor, que son un elemento cada uno.
 - **Los rodillos son cilindros CSS 3D reales.** Cada premio es una cara pegada
   por dentro con `rotateX(i·paso) translateZ(radio)`; girar es rotar el
   cilindro. El radio se calcula en JS a partir del alto real de la ventanita,
@@ -233,7 +246,17 @@ nada más.
 - **Todo respeta `prefers-reduced-motion`**: si el sistema pide menos
   movimiento, las animaciones se apagan y el contenido se muestra directo.
 - Imágenes en WebP y videos re-comprimidos: los 13 MB originales quedaron en
-  ~4 MB.
+  ~4 MB en disco, y la página abre con 125 KB.
+
+### Medido en un celular de gama media (CPU 6× más lenta)
+
+| | Antes | Ahora |
+| --- | --- | --- |
+| FPS en la portada | 22 | 60 |
+| FPS haciendo scroll | 17 | 57 |
+| Peso al abrir | 333 KB | 125 KB |
+| Peso tras verla entera | 1083 KB | 367 KB |
+| Cuadros trabados al scrollear | 25 | 0 |
 
 ---
 

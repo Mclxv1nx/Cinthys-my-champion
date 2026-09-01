@@ -1,6 +1,10 @@
 import { Section } from './ui/Section'
 import { Reveal } from './ui/Reveal'
+import { Foto } from './ui/Foto'
 import { useTilt } from '@/hooks/useTilt'
+
+/* Cuatro columnas en desktop, una sola en celular. */
+const MEDIDAS = '(min-width: 960px) 24vw, (min-width: 640px) 46vw, 92vw'
 
 const LOGROS = [
   {
@@ -68,14 +72,7 @@ export function Ganadora() {
         {LOGROS.map((l, i) => (
           <Reveal key={l.src} demora={i * 90} className="logros__celda">
             <figure className="logro vidrio">
-              <img
-                src={l.src}
-                alt={l.alt}
-                loading="lazy"
-                decoding="async"
-                width={800}
-                height={600}
-              />
+              <Foto src={l.src} alt={l.alt} sizes={MEDIDAS} />
               <figcaption className="logro__pie">
                 <strong>{l.pie}</strong>
                 <span>{l.texto}</span>

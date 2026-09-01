@@ -11,10 +11,11 @@ import { TikToks } from './components/TikToks'
 import { Flores } from './components/Flores'
 import { Tragaperras } from './components/tragaperras/Tragaperras'
 import { Footer } from './components/Footer'
+import { VisorProvider } from './components/ui/Visor'
 
 export default function App() {
   return (
-    <>
+    <VisorProvider>
       <Fondo />
 
       <main id="contenido">
@@ -32,6 +33,6 @@ export default function App() {
 
       <Footer />
       <Nav />
-    </>
+    </VisorProvider>
   )
 }

@@ -1,6 +1,11 @@
 import { momentos } from '@/data/momentos'
 import { Section } from './ui/Section'
 import { Reveal } from './ui/Reveal'
+import { Foto } from './ui/Foto'
+import { MiniVideo } from './ui/MiniVideo'
+
+/* En celular la tarjeta ocupa casi todo el ancho; en desktop, media columna. */
+const MEDIDAS = '(min-width: 960px) 46vw, 92vw'
 
 /** Línea de tiempo de nuestros recuerdos. Zigzag en desktop, columna en celular. */
 export function Historia() {
@@ -34,22 +39,14 @@ export function Historia() {
             <article className="momento vidrio">
               <div className="momento__medio">
                 {m.medio.tipo === 'foto' ? (
-                  <img
-                    src={m.medio.src}
-                    alt={m.alt}
-                    loading="lazy"
-                    decoding="async"
-                    width={800}
-                    height={600}
-                  />
+                  <Foto src={m.medio.src} alt={m.alt} sizes={MEDIDAS} />
                 ) : (
-                  <video
+                  <MiniVideo
                     src={m.medio.src}
                     poster={m.medio.poster}
-                    controls
-                    playsInline
-                    preload="none"
-                    aria-label={m.alt}
+                    alt={m.alt}
+                    pie={m.titulo}
+                    sizes={MEDIDAS}
                   />
                 )}
               </div>

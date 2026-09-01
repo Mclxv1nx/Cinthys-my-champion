@@ -10,11 +10,11 @@ const CORAZONES = ['💗', '💜', '🤍', '✨', '💞']
 export function Fondo() {
   const corazones = useMemo(
     () =>
-      Array.from({ length: 14 }, (_, i) => ({
+      Array.from({ length: 8 }, (_, i) => ({
         id: i,
         emoji: CORAZONES[i % CORAZONES.length],
         estilo: {
-          left: `${(i * 7.3 + 4) % 96}%`,
+          left: `${(i * 12.7 + 5) % 94}%`,
           fontSize: `${10 + ((i * 5) % 16)}px`,
           animationDuration: `${17 + ((i * 3.1) % 14)}s`,
           animationDelay: `${-(i * 2.4) % 24}s`,

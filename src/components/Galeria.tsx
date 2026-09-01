@@ -3,9 +3,12 @@ import type { CSSProperties } from 'react'
 import { galeria } from '@/data/galeria'
 import { Section } from './ui/Section'
 import { Reveal } from './ui/Reveal'
+import { Foto } from './ui/Foto'
+import { useVisor } from './ui/Visor'
 
 const TOTAL = galeria.length
 const PASO = 360 / TOTAL
+const MEDIDAS = '(min-width: 960px) 280px, 44vw'
 
 /**
  * Carrusel 3D de verdad: las piezas van pegadas por dentro a un cilindro
@@ -16,7 +19,7 @@ export function Galeria() {
   const pista = useRef<HTMLDivElement>(null)
   const [angulo, setAngulo] = useState(0)
   const [radio, setRadio] = useState(340)
-  const [abierta, setAbierta] = useState<number | null>(null)
+  const abrirVisor = useVisor()
 
   const indice = ((Math.round(-angulo / PASO) % TOTAL) + TOTAL) % TOTAL
 
@@ -47,10 +50,12 @@ export function Galeria() {
     let inicioX = 0
     let anguloInicio = 0
     let idPuntero = -1
+    let movido = 0
 
     const abajo = (e: PointerEvent) => {
-      if ((e.target as HTMLElement).closest('button, a, video')) return
+      if ((e.target as HTMLElement).closest('button, a')) return
       arrastrando = true
+      movido = 0
       idPuntero = e.pointerId
       inicioX = e.clientX
       setAngulo((a) => {
@@ -64,6 +69,7 @@ export function Galeria() {
     const mueve = (e: PointerEvent) => {
       if (!arrastrando || e.pointerId !== idPuntero) return
       const dx = e.clientX - inicioX
+      movido = Math.max(movido, Math.abs(dx))
       setAngulo(anguloInicio + dx * 0.32)
     }
 
@@ -77,6 +83,9 @@ export function Galeria() {
         /* el puntero ya se fue */
       }
       setAngulo((a) => Math.round(a / PASO) * PASO)
+      /* Si arrastró de verdad, que no se cuente como clic en la pieza. */
+      if (movido > 8) nodo.dataset.arrastro = '1'
+      else delete nodo.dataset.arrastro
     }
 
     nodo.addEventListener('pointerdown', abajo)
@@ -92,7 +101,6 @@ export function Galeria() {
     }
   }, [])
 
-  /* Teclado. */
   const teclas = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
       e.preventDefault()
@@ -104,19 +112,15 @@ export function Galeria() {
     }
   }
 
-  /* Cerrar la lupa con Escape. */
-  useEffect(() => {
-    if (abierta === null) return
-    const esc = (e: KeyboardEvent) => e.key === 'Escape' && setAbierta(null)
-    window.addEventListener('keydown', esc)
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', esc)
-      document.body.style.overflow = ''
-    }
-  }, [abierta])
-
-  const pieza = abierta !== null ? galeria[abierta] : null
+  const abrir = (i: number) => {
+    if (pista.current?.dataset.arrastro) return
+    const p = galeria[i]
+    abrirVisor(
+      p.tipo === 'foto'
+        ? { tipo: 'foto', src: p.src, alt: p.alt, pie: p.pie }
+        : { tipo: 'video', src: p.src, poster: p.poster, alt: p.alt, pie: p.pie },
+    )
+  }
 
   return (
     <Section
@@ -147,30 +151,38 @@ export function Galeria() {
             >
               {galeria.map((p, i) => {
                 const alFrente = i === indice
+                /* Solo se cargan las piezas cercanas a la de adelante. */
+                const distancia = Math.min(
+                  (i - indice + TOTAL) % TOTAL,
+                  (indice - i + TOTAL) % TOTAL,
+                )
+                const cerca = distancia <= 2
+
                 return (
                   <button
                     type="button"
                     key={p.src}
                     className={`pieza ${alFrente ? 'es-frente' : ''}`}
                     style={
-                      {
-                        transform: `rotateY(${i * PASO}deg) translateZ(${radio}px)`,
-                      } as CSSProperties
+                      { transform: `rotateY(${i * PASO}deg) translateZ(${radio}px)` } as CSSProperties
                     }
-                    onClick={() => alFrente && setAbierta(i)}
+                    onClick={() => alFrente && abrir(i)}
                     tabIndex={alFrente ? 0 : -1}
                     aria-hidden={!alFrente}
                     aria-label={`${p.pie} — abrir en grande`}
                   >
-                    {p.tipo === 'foto' ? (
-                      <img src={p.src} alt={p.alt} loading="lazy" decoding="async" />
-                    ) : (
-                      <>
-                        <img src={p.poster} alt={p.alt} loading="lazy" decoding="async" />
-                        <span className="pieza__play" aria-hidden="true">
-                          ▶
-                        </span>
-                      </>
+                    <Foto
+                      src={p.tipo === 'foto' ? p.src : p.poster}
+                      alt={p.alt}
+                      sizes={MEDIDAS}
+                      loading={cerca ? 'eager' : 'lazy'}
+                    />
+                    {p.tipo === 'video' && (
+                      <span className="pieza__play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                          <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z" />
+                        </svg>
+                      </span>
                     )}
                     <span className="pieza__pie">{p.pie}</span>
                   </button>
@@ -203,33 +215,6 @@ export function Galeria() {
           </div>
         </div>
       </Reveal>
-
-      {pieza && (
-        <div
-          className="lupa"
-          role="dialog"
-          aria-modal="true"
-          aria-label={pieza.pie}
-          onClick={() => setAbierta(null)}
-        >
-          <div className="lupa__caja" onClick={(e) => e.stopPropagation()}>
-            {pieza.tipo === 'foto' ? (
-              <img src={pieza.src} alt={pieza.alt} />
-            ) : (
-              <video src={pieza.src} poster={pieza.poster} controls autoPlay playsInline />
-            )}
-            <p className="lupa__pie">{pieza.pie}</p>
-          </div>
-          <button
-            type="button"
-            className="lupa__cerrar"
-            onClick={() => setAbierta(null)}
-            aria-label="Cerrar"
-          >
-            ✕
-          </button>
-        </div>
-      )}
     </Section>
   )
 }

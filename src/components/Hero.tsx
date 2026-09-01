@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { config } from '@/lib/config'
 import { useTilt } from '@/hooks/useTilt'
+import { Foto } from './ui/Foto'
 
 function diasJuntos(desde: string): number {
   const inicio = new Date(`${desde}T00:00:00`)
@@ -62,15 +63,13 @@ export function Hero() {
 
         <div className="hero__marco" ref={tarjeta}>
           <div className="hero__tarjeta tilt">
-            <div className="hero__halo" aria-hidden="true" />
-            <img
+            <Foto
               className="hero__foto"
               src="/media/portada.webp"
               alt="Retrato de Cinthya en el parque"
-              width={900}
-              height={1200}
+              sizes="(min-width: 1280px) 420px, (min-width: 960px) 38vw, 66vw"
+              loading="eager"
               fetchPriority="high"
-              decoding="async"
             />
             <div className="hero__velo" aria-hidden="true" />
             <div className="tilt__brillo" aria-hidden="true" />

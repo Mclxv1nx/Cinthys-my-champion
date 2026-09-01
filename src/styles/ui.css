@@ -75,9 +75,9 @@
   padding: 0.4rem 0.95rem;
   border: 1px solid var(--line);
   border-radius: var(--r-full);
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* Color plano en vez de backdrop-filter: sobre fondo oscuro se ve igual
+     y le ahorra al celular volver a difuminar en cada cuadro. */
+  background: rgba(24, 18, 38, 0.72);
   color: var(--tx-2);
   font-size: var(--t-xs);
   font-weight: 500;
@@ -100,11 +100,11 @@
   position: relative;
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
+  /* El fondo ya es opaco, así que el backdrop-filter no aportaba nada
+     visible y sí costaba mucho al pintar. Fuera. */
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012)),
     var(--bg-elev);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--sombra-media);
   overflow: hidden;
 }
@@ -237,9 +237,7 @@
 .btn--fantasma {
   color: var(--tx);
   border: 1px solid var(--line-strong);
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(24, 18, 38, 0.7);
 }
 
 .btn--fantasma:not(:disabled):hover {

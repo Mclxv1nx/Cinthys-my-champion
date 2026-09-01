@@ -1,6 +1,10 @@
 import { Section } from './ui/Section'
 import { Reveal } from './ui/Reveal'
+import { Foto } from './ui/Foto'
+import { MiniVideo } from './ui/MiniVideo'
 import { useTilt } from '@/hooks/useTilt'
+
+const MEDIDAS = '(min-width: 960px) 44vw, 92vw'
 
 const DATOS = [
   { icono: '🐺', texto: 'Husky, o sea: pura felicidad, energía y amor, corazón.' },
@@ -28,13 +32,10 @@ export function Sayko() {
         <Reveal desde="izquierda">
           <div className="sayko__marco" ref={ref}>
             <figure className="sayko__foto vidrio tilt">
-              <img
+              <Foto
                 src="/media/sayko.webp"
                 alt="Sayko, el husky de Cinthya, en el pasto"
-                loading="lazy"
-                decoding="async"
-                width={900}
-                height={1100}
+                sizes={MEDIDAS}
               />
               <figcaption>
                 <span className="sayko__nombre">Sayko</span>
@@ -61,13 +62,12 @@ export function Sayko() {
 
           <Reveal desde="derecha" demora={160}>
             <figure className="sayko__video vidrio">
-              <video
+              <MiniVideo
                 src="/media/conejitos.mp4"
                 poster="/media/conejitos-poster.webp"
-                controls
-                playsInline
-                preload="none"
-                aria-label="Cinthya dándole de comer a los conejitos"
+                alt="Cinthya dándole de comer a los conejitos"
+                pie="Dándoles de comer a los conejitos"
+                sizes={MEDIDAS}
               />
               <figcaption>
                 Dándoles de comer a los conejitos. Tienes ese don con los animales.
