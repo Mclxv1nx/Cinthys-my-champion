@@ -30,17 +30,32 @@ export const useVisor = (): Abrir => useContext(ContextoVisor)
 
 export function VisorProvider({ children }: { children: ReactNode }) {
   const [medio, setMedio] = useState<Medio | null>(null)
+  const [reproduciendo, setReproduciendo] = useState(false)
   const video = useRef<HTMLVideoElement>(null)
 
-  const abrir = useCallback<Abrir>((m) => setMedio(m), [])
+  const abrir = useCallback<Abrir>((m) => {
+    setReproduciendo(false)
+    setMedio(m)
+  }, [])
   const cerrar = useCallback(() => setMedio(null), [])
 
-  /* Arrancar el video en cuanto se abre. Si el navegador pide otro toque
-     (pasa en algunos iPhone), no insistimos: los controles ya están ahí. */
+  /* Intentar arrancar el video en cuanto se abre. En muchos celulares
+     (sobre todo iPhone) el navegador bloquea este autoplay por venir sin
+     un toque directo — para eso queda el botón de reproducir de abajo. */
   useEffect(() => {
     if (medio?.tipo !== 'video') return
-    video.current?.play().catch(() => {})
+    video.current
+      ?.play()
+      .then(() => setReproduciendo(true))
+      .catch(() => setReproduciendo(false))
   }, [medio])
+
+  const reproducir = useCallback(() => {
+    video.current
+      ?.play()
+      .then(() => setReproduciendo(true))
+      .catch(() => {})
+  }, [])
 
   /* Escape para cerrar, y se bloquea el scroll de atrás. */
   useEffect(() => {
@@ -85,17 +100,34 @@ export function VisorProvider({ children }: { children: ReactNode }) {
                 fetchPriority="high"
               />
             ) : (
-              <video
-                ref={video}
-                className="visor__video"
-                src={medio.src}
-                poster={medio.poster}
-                controls
-                autoPlay
-                playsInline
-                preload="auto"
-                aria-label={medio.alt}
-              />
+              <div className="visor__video-caja">
+                <video
+                  ref={video}
+                  className="visor__video"
+                  src={medio.src}
+                  poster={medio.poster}
+                  controls
+                  autoPlay
+                  playsInline
+                  preload="auto"
+                  onPlaying={() => setReproduciendo(true)}
+                  onPause={() => setReproduciendo(false)}
+                  aria-label={medio.alt}
+                />
+
+                {!reproduciendo && (
+                  <button
+                    type="button"
+                    className="visor__play"
+                    onClick={reproducir}
+                    aria-label="Reproducir video"
+                  >
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                      <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             )}
 
             {medio.pie && <p className="visor__pie">{medio.pie}</p>}
