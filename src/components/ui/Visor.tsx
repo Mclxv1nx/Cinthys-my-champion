@@ -122,9 +122,10 @@ export function VisorProvider({ children }: { children: ReactNode }) {
                     onClick={reproducir}
                     aria-label="Reproducir video"
                   >
-                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
                       <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z" />
                     </svg>
+                    Reproducir
                   </button>
                 )}
               </div>
