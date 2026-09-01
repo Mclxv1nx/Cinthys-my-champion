@@ -132,11 +132,11 @@ export function VisorProvider({ children }: { children: ReactNode }) {
             )}
 
             {medio.pie && <p className="visor__pie">{medio.pie}</p>}
-          </div>
 
-          <button type="button" className="visor__cerrar" onClick={cerrar} aria-label="Cerrar">
-            ✕
-          </button>
+            <button type="button" className="visor__cerrar" onClick={cerrar} aria-label="Cerrar">
+              ✕
+            </button>
+          </div>
         </div>
       )}
     </ContextoVisor.Provider>
